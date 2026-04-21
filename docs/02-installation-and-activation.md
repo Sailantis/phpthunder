@@ -1,58 +1,69 @@
 # Installation and activation
 
-This guide covers the initial setup path for PhpThunder: install the extension, point it at the right PHP binary, tune the project-level settings, and activate a trial or Pro license when needed.
+This guide covers the full setup path for PhpThunder: installing the extension, pointing it at the right PHP binary, tuning workspace settings, and activating a license when you're ready for Pro features.
 
 ## Install the extension
 
-Install PhpThunder in VS Code the same way you install other extensions. After installation, open a workspace that contains PHP files so the extension can activate and scan the project.
+Install PhpThunder from the VS Code marketplace the same way you install any other extension. Once installed, open a folder that contains PHP files — the extension activates automatically and begins its initial project scan.
 
 ## Configure the PHP interpreter
 
-PhpThunder can work with the default `php` available on PATH, but most teams should explicitly select the binary they want to use.
+PhpThunder uses a named interpreter catalog rather than a raw path. This makes it easy to switch between multiple PHP versions in different projects.
 
 1. Run `PhpThunder: Configure PHP Interpreters`.
-2. Add or auto-detect PHP binaries.
-3. Choose the interpreter that should be active for the current workspace.
+2. Add or auto-detect your PHP binaries. You can add as many as you need (PHP 8.1, 8.2, 8.3, etc.).
+3. Choose which interpreter should be active for the current workspace.
 
-Important detail: `phpThunder.activeInterpreter` stores the interpreter name from the PhpThunder catalog, not the raw path.
+> **Important:** `phpThunder.activeInterpreter` stores the interpreter _name_ from the PhpThunder catalog, not a file path. Make sure the name in your `settings.json` matches exactly what appears in the interpreter UI.
+
+> **Tip:** Teams working across multiple projects with different PHP versions can add all of them to the catalog once and then select per workspace — no need to reconfigure global PATH every time.
 
 ## Select the PHP language level
 
-Run `PhpThunder: Select PHP Version` and choose the language level that matches the current folder. This affects diagnostics, feature checks, and analysis behavior.
+Run `PhpThunder: Select PHP Version` and pick the language level that matches the current project. This drives diagnostics, type analysis, and feature-compatibility checks.
 
-The setting behind the command is `phpThunder.phpVersion`.
+The underlying setting is `phpThunder.phpVersion`. You can set it per workspace folder in `.vscode/settings.json` so each project in a multi-root setup runs its own level.
 
 ## Configure Composer and include paths
 
-PhpThunder exposes dedicated setup commands for project infrastructure:
+PhpThunder exposes dedicated commands for project infrastructure:
 
-- `PhpThunder: Configure Composer`
-- `PhpThunder: Configure Include Paths`
+- **`PhpThunder: Configure Composer`** — useful when the project ships its own `composer.phar` or uses a non-standard Composer binary location.
+- **`PhpThunder: Configure Include Paths`** — use this when the project depends on PHP directories that live outside the standard Composer graph (legacy stubs, internal monorepo packages, etc.).
 
-Use Composer configuration when the project needs a specific `composer.phar` or a custom Composer binary resolution strategy. Use include paths when the project depends on extra PHP directories outside the normal Composer graph.
-
-After changing include paths, run `PhpThunder: Reindex Project` or reload the window.
+After changing include paths, run `PhpThunder: Reindex Project` or reload the VS Code window to pick up the changes.
 
 ## Activate a trial or Pro license
 
-Run `PhpThunder: Activate License` to open the license page.
+PhpThunder offers a full free tier, a 30-day Pro trial, and ongoing Pro access. When you're ready to unlock Pro features, run `PhpThunder: Activate License`.
 
-From there you can:
+From the activation page you can:
 
-- sign in with email and password to fetch available licenses
-- activate directly with a license key
-- move from Free mode into Trial or Pro mode
+- **Sign in with your account** to fetch and activate a license associated with your email
+- **Enter a license key directly** if you already have one
 
-The status bar reflects the current access state:
+<!-- MEDIA: screenshot of the activation dialog -->
 
-- `PHP Free`
-- `PHP Trial`
-- `PHP Pro`
-- `PHP Grace Period`
+> 📸 _Coming soon: screenshot of the activation flow._
+
+### Status bar states
+
+The status bar entry tells you your current access level at a glance:
+
+| Status bar shows   | What it means                                                       |
+| ------------------ | ------------------------------------------------------------------- |
+| `PHP Free`         | Base features only — no trial active                                |
+| `PHP Trial`        | Full Pro access for the trial period                                |
+| `PHP Pro`          | Active Pro license                                                  |
+| `PHP Grace Period` | License recently expired; Pro features remain available temporarily |
+
+> **Grace Period:** If your Pro license lapses, PhpThunder enters a Grace Period so you're not immediately blocked. You can reactivate or renew from `PhpThunder: Activate License` at any time. See the [FAQ](10-faq.md#what-is-the-grace-period) for more detail.
+
+For pricing and plan details, see the [Sailantis website](https://sailantis.io).
 
 ## Suggested workspace settings
 
-Use this as a starting point in `.vscode/settings.json`:
+A good starting point for `.vscode/settings.json`:
 
 ```json
 {
@@ -60,23 +71,25 @@ Use this as a starting point in `.vscode/settings.json`:
   "phpThunder.activeInterpreter": "PHP 8.3",
   "phpThunder.testRunner": "auto",
   "phpThunder.composer.mode": "auto",
-  "phpThunder.composer.projectPhar": "./tools/composer.phar",
   "phpThunder.includePaths": ["stubs", "packages/shared/src"]
 }
 ```
 
-Adjust the interpreter name and paths to match your workspace.
+Adjust the PHP version, interpreter name, and paths to match your project.
 
 ## Useful configuration commands
 
-- `PhpThunder: Configure PHP Interpreters`
-- `PhpThunder: Configure Composer`
-- `PhpThunder: Configure Include Paths`
-- `PhpThunder: Select PHP Version`
-- `PhpThunder: Activate License`
+| Command                                  | Purpose                                       |
+| ---------------------------------------- | --------------------------------------------- |
+| `PhpThunder: Configure PHP Interpreters` | Add, remove, and select PHP binaries          |
+| `PhpThunder: Select PHP Version`         | Set the language level for the current folder |
+| `PhpThunder: Configure Composer`         | Customize Composer binary resolution          |
+| `PhpThunder: Configure Include Paths`    | Add extra source directories to the index     |
+| `PhpThunder: Activate License`           | Start a trial or activate a Pro license       |
 
 ## Next steps
 
-- Continue with [Editor features](03-editor-features.md) for daily editing workflows.
-- Continue with [Project configuration](07-project-configuration.md) for a broader settings reference.
-- Continue with [Free vs Pro](08-free-vs-pro.md) if you need the current feature boundary.
+- [Editor features](03-editor-features.md) — completion, diagnostics, formatting, and more
+- [Project configuration](07-project-configuration.md) — full settings reference
+- [Free vs Pro](08-free-vs-pro.md) — which workflows require Pro access
+- [FAQ](10-faq.md) — common questions about activation and licensing

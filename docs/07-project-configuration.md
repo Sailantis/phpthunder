@@ -1,82 +1,165 @@
 # Project configuration
 
-This page collects the settings and commands that shape how PhpThunder behaves inside a workspace.
+This page is the complete settings reference for PhpThunder. Each section explains not just what a setting does but also when you'd actually want to change it.
 
-## Core workspace settings
+For a quick orientation, the settings fall into five areas:
+
+1. [Intelligence](#intelligence) — PHP version, interpreter, include paths
+2. [Formatting](#formatting) — style rules for arrays, parameters, control structures
+3. [Diagnostics & code fixes](#diagnostics--code-fixes) — what PhpThunder analyzes and flags
+4. [Testing](#testing) — runner selection
+5. [Debugging & profiling](#debugging--profiling) — Xdebug port, profiling server, tracing
+
+---
+
+## Intelligence
+
+These settings drive code analysis: what PHP version to target, which PHP binary to use, and which source directories to scan.
 
 ### PHP version and interpreter
 
-- `phpThunder.phpVersion`: language level for the current folder
-- `phpThunder.activeInterpreter`: selected interpreter name for the workspace
-- `phpThunder.interpreters`: machine-scoped interpreter catalog managed by the PhpThunder settings UI
+| Setting                        | What it does                                                                                                |
+| ------------------------------ | ----------------------------------------------------------------------------------------------------------- |
+| `phpThunder.phpVersion`        | Sets the PHP language level for the current folder. Affects diagnostics, feature checks, and type analysis. |
+| `phpThunder.activeInterpreter` | Selects the active interpreter by name from the PhpThunder catalog.                                         |
+| `phpThunder.interpreters`      | Machine-scoped catalog of PHP binaries. Managed by the PhpThunder settings UI — don't edit this by hand.    |
 
-Use these commands to configure them:
+**When to change:** Set `phpThunder.phpVersion` as soon as you open a project. Getting this right prevents false-positive diagnostics about language features. Use `phpThunder.activeInterpreter` to pin a workspace to a specific binary when your machine has multiple PHP versions.
+
+Useful commands:
 
 - `PhpThunder: Select PHP Version`
 - `PhpThunder: Configure PHP Interpreters`
 
-## Test runner
+### Composer and include paths
 
-- `phpThunder.testRunner`: `auto`, `phpunit`, or `pest`
+| Setting                           | What it does                                                             |
+| --------------------------------- | ------------------------------------------------------------------------ |
+| `phpThunder.composer.mode`        | How PhpThunder finds Composer: `auto`, `projectPhar`, or `custom`.       |
+| `phpThunder.composer.projectPhar` | Path to a project-local `composer.phar`, relative to the workspace root. |
+| `phpThunder.includePaths`         | Extra PHP directories to index beyond what Composer provides.            |
 
-Use `auto` unless the workspace needs a fixed runner.
+**When to change:** Most projects work fine with `auto`. Set `projectPhar` when the project ships its own `composer.phar` under a `tools/` or `build/` folder. Use `includePaths` for legacy codebases, internal SDKs, or monorepo packages that aren't registered in `composer.json`.
 
-## Composer and include paths
-
-- `phpThunder.composer.mode`: `auto`, `projectPhar`, or `custom`
-- `phpThunder.composer.projectPhar`: project-relative path to a `composer.phar`
-- `phpThunder.includePaths`: extra PHP directories to index
+> **Important:** After changing `includePaths`, run `PhpThunder: Reindex Project` or reload the window. Include-path changes are not picked up automatically.
 
 Useful commands:
 
 - `PhpThunder: Configure Composer`
 - `PhpThunder: Configure Include Paths`
-- `PhpThunder: Composer Install`
-- `PhpThunder: Composer Update`
-- `PhpThunder: Composer Require Package`
-- `PhpThunder: Composer Dump Autoload`
-- `PhpThunder: Composer Validate`
+- `PhpThunder: Reindex Project`
 
-After changing include paths, run `PhpThunder: Reindex Project` or reload the window.
+### Completion behavior
 
-## Diagnostics and code fixes
+| Setting                                     | Default | What it does                                                                                                                                                                   |
+| ------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `phpThunder.completion.autoTriggerFallback` | `true`  | When VS Code's `editor.quickSuggestions` settings suppress completions for plain text, PhpThunder can still auto-open suggestions for PHP variables and namespace identifiers. |
 
-- `phpThunder.diagnostics.enableVendor`: enable diagnostics for files under `vendor/`
-- `phpThunder.codeFixes.enabled`: toggle code-fix suggestions
-- `phpThunder.codeFixes.disabledFixes`: disable individual fix IDs such as `CF001`
+**When to change:** Rarely. Leave this at `true` unless you're seeing unwanted suggestion popups.
 
-The default vendor behavior is intentionally conservative to avoid noisy third-party diagnostics.
+---
 
 ## Formatting
 
-Layout settings with the values `preserve`, `auto`, `force-single-line`, or `force-multi-line`:
+PhpThunder's formatter is conservative by default — it preserves whatever layout is already there. Change these settings when the project should enforce a consistent style.
 
-- `phpThunder.formatting.arrays`
-- `phpThunder.formatting.parameters`
-- `phpThunder.formatting.arguments`
-- `phpThunder.formatting.matchArms`
+### Layout settings
 
-Syntax settings with the values `preserve`, `force-braces`, or `force-alternative`:
+These accept `preserve`, `auto`, `force-single-line`, or `force-multi-line`:
 
-- `phpThunder.formatting.ifSyntax`
-- `phpThunder.formatting.foreachSyntax`
-- `phpThunder.formatting.forSyntax`
-- `phpThunder.formatting.whileSyntax`
-- `phpThunder.formatting.switchSyntax`
+| Setting                            | Controls                              |
+| ---------------------------------- | ------------------------------------- |
+| `phpThunder.formatting.arrays`     | Array literal layout                  |
+| `phpThunder.formatting.parameters` | Function/method parameter list layout |
+| `phpThunder.formatting.arguments`  | Call-site argument list layout        |
+| `phpThunder.formatting.matchArms`  | `match` expression arm layout         |
 
-Width control:
+- **`preserve`** — leave the existing style alone
+- **`auto`** — break to multi-line when the line exceeds `maxInlineWidth`, keep single-line otherwise
+- **`force-single-line`** — always collapse to one line
+- **`force-multi-line`** — always expand to multiple lines
 
-- `phpThunder.formatting.maxInlineWidth`
+### Syntax style settings
 
-## Profiling and tracing
+These accept `preserve`, `force-braces`, or `force-alternative`:
 
-- `phpThunder.profiling.webPort`
-- `phpThunder.profiling.docRoot`
-- `phpThunder.trace.server`
+| Setting                               | Controls                   |
+| ------------------------------------- | -------------------------- |
+| `phpThunder.formatting.ifSyntax`      | `if`/`elseif`/`else` style |
+| `phpThunder.formatting.foreachSyntax` | `foreach` style            |
+| `phpThunder.formatting.forSyntax`     | `for` style                |
+| `phpThunder.formatting.whileSyntax`   | `while` style              |
+| `phpThunder.formatting.switchSyntax`  | `switch` style             |
 
-`phpThunder.trace.server` accepts `off`, `messages`, or `verbose`. Use `verbose` only when diagnosing extension behavior because it produces more log traffic.
+- **`preserve`** — keep whichever style is already used
+- **`force-braces`** — always use curly-brace blocks
+- **`force-alternative`** — always use `if (): ... endif;` alternative syntax (common in view templates)
+
+### Width control
+
+| Setting                                | Default | What it does                                                                               |
+| -------------------------------------- | ------- | ------------------------------------------------------------------------------------------ |
+| `phpThunder.formatting.maxInlineWidth` | `80`    | Line width at which `auto` layout mode breaks a single-line construct into multiple lines. |
+
+**When to change:** Set `maxInlineWidth` to match the project's line-length rule (120, 100, etc.) and use `auto` for arrays and parameters to get consistent automatic breaking.
+
+---
+
+## Diagnostics & code fixes
+
+| Setting                                       | Default | What it does                                               |
+| --------------------------------------------- | ------- | ---------------------------------------------------------- |
+| `phpThunder.diagnostics.enableVendor`         | `false` | Run diagnostics on files under `vendor/`.                  |
+| `phpThunder.codeFixes.enabled`                | `true`  | Enable code-fix hints and quick actions.                   |
+| `phpThunder.codeFixes.disabledFixes`          | `[]`    | Disable specific fix IDs (e.g., `["CF001"]`).              |
+| `phpThunder.diagnosticsSummary.enabled`       | `true`  | Show per-file diagnostics summary indicators.              |
+| `phpThunder.diagnosticsSummary.inlineSummary` | `true`  | Show a clickable CodeLens summary at the top of each file. |
+
+**When to change:** Enable `diagnostics.enableVendor` only when you're actually working on a Composer package or need to trace a problem into a dependency — it increases analysis load and noise. Disable specific fix IDs in `disabledFixes` when a rule doesn't suit the project.
+
+---
+
+## Testing
+
+| Setting                 | Default | What it does                               |
+| ----------------------- | ------- | ------------------------------------------ |
+| `phpThunder.testRunner` | `auto`  | Test runner: `auto`, `phpunit`, or `pest`. |
+
+**When to change:** `auto` works for most projects. Explicitly set `phpunit` or `pest` if the project has both installed but you only want to use one.
+
+---
+
+## Debugging & profiling
+
+| Setting                                 | Default    | What it does                                                           |
+| --------------------------------------- | ---------- | ---------------------------------------------------------------------- |
+| `phpThunder.profiling.webPort`          | `8000`     | HTTP port for the local web profiling server (Pro).                    |
+| `phpThunder.profiling.docRoot`          | `"public"` | Document root for web profiling, relative to the workspace root (Pro). |
+| `phpThunder.debug.inlineValues.enabled` | `true`     | Show variable values inline while a debug session is paused (Pro).     |
+| `phpThunder.trace.server`               | `off`      | LSP communication tracing: `off`, `messages`, or `verbose`.            |
+
+**When to change:** Adjust `webPort` and `docRoot` to match the project layout. Use `verbose` tracing only when diagnosing extension behavior — it generates significant log output and should be turned off afterward.
+
+---
 
 ## Example settings.json
+
+### Starter config
+
+Good for most projects:
+
+```json
+{
+  "phpThunder.phpVersion": "8.3",
+  "phpThunder.activeInterpreter": "PHP 8.3",
+  "phpThunder.testRunner": "auto",
+  "phpThunder.composer.mode": "auto"
+}
+```
+
+### Power user config
+
+More specific style rules and extra source paths:
 
 ```json
 {
@@ -88,26 +171,30 @@ Width control:
   "phpThunder.includePaths": ["stubs", "packages/shared/src"],
   "phpThunder.codeFixes.enabled": true,
   "phpThunder.diagnostics.enableVendor": false,
-  "phpThunder.formatting.arrays": "preserve",
+  "phpThunder.formatting.arrays": "auto",
   "phpThunder.formatting.parameters": "auto",
   "phpThunder.formatting.arguments": "auto",
-  "phpThunder.formatting.ifSyntax": "preserve",
-  "phpThunder.formatting.maxInlineWidth": 100,
+  "phpThunder.formatting.ifSyntax": "force-braces",
+  "phpThunder.formatting.maxInlineWidth": 120,
+  "phpThunder.profiling.webPort": 8000,
+  "phpThunder.profiling.docRoot": "public",
   "phpThunder.trace.server": "off"
 }
 ```
 
+---
+
 ## Operational commands
 
-The commands you will use most often after configuration changes are:
+The commands you reach for most often after configuration changes:
 
-- `PhpThunder: Reindex Project`
-- `PhpThunder: Configure PHP Interpreters`
-- `PhpThunder: Configure Composer`
-- `PhpThunder: Configure Include Paths`
-- `PhpThunder: Select PHP Version`
+- `PhpThunder: Reindex Project` — rebuild the project index
+- `PhpThunder: Configure PHP Interpreters` — add or switch interpreters
+- `PhpThunder: Configure Composer` — update Composer resolution strategy
+- `PhpThunder: Configure Include Paths` — add extra source directories
+- `PhpThunder: Select PHP Version` — change the language level for the current folder
 
 ## Next steps
 
-- Continue with [Free vs Pro](08-free-vs-pro.md) if you need to know which workflows depend on a license.
-- Continue with [Troubleshooting](09-troubleshooting.md) if the project still behaves differently than expected after configuration changes.
+- [Free vs Pro](08-free-vs-pro.md) — which workflows depend on a Pro license
+- [Troubleshooting](09-troubleshooting.md) — if the project still behaves unexpectedly after configuration changes

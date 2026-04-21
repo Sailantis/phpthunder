@@ -1,4 +1,6 @@
-# PhpThunder documentation
+# PhpThunder Documentation
+
+![PhpThunder Logo](docs/assets/phpthunder-logo-text-banner.svg)
 
 PhpThunder is a PHP language server, debugger, and workflow extension for VS Code. This repository is the canonical markdown source for the long-form product documentation.
 
@@ -22,6 +24,10 @@ PhpThunder is a PHP language server, debugger, and workflow extension for VS Cod
 - [Free vs Pro](docs/08-free-vs-pro.md)
 - [Troubleshooting](docs/09-troubleshooting.md)
 
+### Have a question
+
+- [FAQ](docs/10-faq.md)
+
 ## What this docs set covers
 
 - Fast onboarding for people evaluating PhpThunder for the first time
@@ -29,6 +35,7 @@ PhpThunder is a PHP language server, debugger, and workflow extension for VS Cod
 - Settings and workspace configuration for interpreters, Composer, include paths, formatting, diagnostics, and tracing
 - Clear Free vs Pro boundaries based on the current extension surface
 - Troubleshooting material that matches the current implementation instead of generic PHP editor advice
+- FAQ covering activation, licensing, compatibility, and common quick fixes
 
 ## Documentation principles
 

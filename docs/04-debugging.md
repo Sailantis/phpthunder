@@ -1,24 +1,42 @@
 # Debugging
 
-PhpThunder includes a PHP debugger for VS Code that speaks to Xdebug and supports CLI, web, and attach workflows.
+PhpThunder includes a full PHP debugger for VS Code, built on top of Xdebug. It handles the repetitive parts — finding your PHP binary, generating the right ini configuration, starting the server — so you can focus on the actual problem.
+
+Xdebug is the engine. PhpThunder wires it up, manages the connection, and shows you breakpoints, call stacks, variable values, and (in Pro) inline values directly in the editor.
 
 ## Before you start
 
 You need:
 
-- a PHP interpreter configured for the workspace
-- Xdebug installed and enabled for the interpreter you plan to use
-- a reachable Xdebug port, usually `9003`
+- A PHP interpreter configured for the workspace (see [Installation and activation](02-installation-and-activation.md))
+- Xdebug installed and enabled for that interpreter
+- Port `9003` reachable from your PHP process (the default Xdebug port)
 
-For launch configurations, the debug type is `phpThunder`.
+The debug type for all launch configurations is `phpThunder`.
+
+> **Tip:** Not sure if Xdebug is loaded? PhpThunder checks the selected interpreter when you start a debug session and tells you clearly if the extension is missing or not enabled.
+
+## Three steps to your first breakpoint
+
+1. Create a `launch.json` with a single `launch` configuration (see the example below).
+2. Open a PHP file and click in the gutter to set a breakpoint.
+3. Press `F5` — PhpThunder launches the script, connects to Xdebug, and pauses on the breakpoint.
+
+That's the whole flow for local CLI scripts. Web and remote scenarios add a few more settings but follow the same idea.
+
+<!-- MEDIA: screenshot of a debug session paused at a breakpoint with inline variable values visible -->
+
+> 📸 _Coming soon: screenshot of an active debug session showing inline values and the variable tree._
 
 ## Debug modes
 
-PhpThunder supports three common flows:
+PhpThunder supports three workflows:
 
-- `launch` with `mode: "cli"` for single-script debugging
-- `launch` with `mode: "web"` for built-in web-server workflows
-- `attach` to wait for an incoming Xdebug connection
+| Mode                        | Use case                                                    |
+| --------------------------- | ----------------------------------------------------------- |
+| `launch` with `mode: "cli"` | Run and debug a single PHP script directly                  |
+| `launch` with `mode: "web"` | Start a local PHP web server and debug requests             |
+| `attach`                    | Wait for an incoming Xdebug connection from any PHP process |
 
 ## Example launch.json
 
@@ -27,6 +45,7 @@ PhpThunder supports three common flows:
   "version": "0.2.0",
   "configurations": [
     {
+      // Debug the currently open PHP file as a CLI script
       "type": "phpThunder",
       "request": "launch",
       "name": "Launch PHP script",
@@ -35,6 +54,7 @@ PhpThunder supports three common flows:
       "port": 9003
     },
     {
+      // Start a local web server and debug requests as they come in
       "type": "phpThunder",
       "request": "launch",
       "name": "PHP Web Server",
@@ -42,12 +62,13 @@ PhpThunder supports three common flows:
       "cwd": "${workspaceFolder}",
       "port": 9003,
       "server": {
-        "docRoot": "public",
-        "webPort": 8000,
-        "openBrowser": "ask"
+        "docRoot": "public", // document root relative to cwd
+        "webPort": 8000, // local HTTP port
+        "openBrowser": "ask" // "external", "webview", "ask", or false
       }
     },
     {
+      // Wait for Xdebug to connect — useful for remote processes or containers
       "type": "phpThunder",
       "request": "attach",
       "name": "Attach to Xdebug",
@@ -58,41 +79,43 @@ PhpThunder supports three common flows:
 }
 ```
 
-## Important launch fields
+## Key launch fields
 
-- `program`: PHP script to run in CLI mode
-- `args`: command-line arguments for CLI mode
-- `cwd`: working directory for the PHP process
-- `env`: environment variables for the launched process
-- `phpBin`: override the configured interpreter for a specific launch configuration
-- `xdebugIniPath`: use a custom `php.ini` that loads Xdebug
-- `generateIni`: let PhpThunder generate `.vscode/phpThunder.ini` if Xdebug is not already active
-- `pathMappings`: remote-to-local mappings for Docker or remote hosts
+| Field           | What it does                                                                 |
+| --------------- | ---------------------------------------------------------------------------- |
+| `program`       | PHP script to run in CLI mode                                                |
+| `args`          | Command-line arguments passed to the script                                  |
+| `cwd`           | Working directory for the PHP process                                        |
+| `env`           | Extra environment variables for the launched process                         |
+| `phpBin`        | Override the workspace interpreter for this specific configuration           |
+| `xdebugIniPath` | Path to a custom `php.ini` that loads Xdebug                                 |
+| `generateIni`   | Let PhpThunder auto-generate `.vscode/phpThunder.ini` if Xdebug isn't loaded |
+| `pathMappings`  | Map remote/container paths to local workspace paths                          |
 
-## Web-mode fields
+## Web-mode server fields
 
-When `mode` is `web`, the nested `server` object can control the local HTTP server:
+When `mode` is `"web"`, the nested `server` object controls the local HTTP server:
 
-- `command`: override the auto-detected server command
-- `docRoot`: document root relative to `cwd`
-- `router`: router script relative to `cwd`
-- `urlPath`: initial request path after the server starts
-- `webPort`: preferred HTTP port
-- `openBrowser`: `external`, `webview`, `ask`, or `false`
+| Field         | What it does                                    |
+| ------------- | ----------------------------------------------- |
+| `command`     | Override the auto-detected server start command |
+| `docRoot`     | Document root, relative to `cwd`                |
+| `router`      | Router script for frameworks that need one      |
+| `urlPath`     | Request path to open after the server starts    |
+| `webPort`     | Preferred HTTP port                             |
+| `openBrowser` | `"external"`, `"webview"`, `"ask"`, or `false`  |
 
-This is a good fit for small apps, built-in server workflows, or framework bootstraps where a local command can serve the project.
+Web mode is a good fit for framework entry points, route testing, or any workflow where a browser request drives the execution path you want to debug.
 
 ## Remote and container debugging
 
-Use `attach` plus `pathMappings` when PHP runs somewhere other than the local workspace path.
-
-Example:
+Use `attach` mode with `pathMappings` when PHP runs somewhere other than your local workspace — a Docker container, a remote VM, or a cloud dev environment.
 
 ```json
 {
   "type": "phpThunder",
   "request": "attach",
-  "name": "Attach to container Xdebug",
+  "name": "Attach to container",
   "hostname": "127.0.0.1",
   "port": 9003,
   "pathMappings": {
@@ -101,15 +124,21 @@ Example:
 }
 ```
 
+> **Common pitfall:** The keys in `pathMappings` are the _remote_ (container/server) paths, and the values are the _local_ (workspace) paths. Getting this backwards is the most common reason breakpoints appear to bind but then don't pause. Double-check the container's actual mount path if things don't pause as expected.
+
+## Inline debug values (Pro)
+
+With a Pro license, PhpThunder shows the current value of variables and expressions inline in the editor — right next to the code — while execution is paused. This means you can often understand the program state at a glance without switching to the Variables panel.
+
 ## A simple debug routine
 
-1. Confirm the selected interpreter is the one you actually use for the project.
-2. Confirm Xdebug is loaded for that interpreter.
+1. Confirm the selected interpreter is the one the project actually uses.
+2. Confirm Xdebug is loaded for that interpreter (`php -m | grep xdebug`).
 3. Start with a minimal `launch` or `attach` configuration.
-4. Set one or two breakpoints.
-5. Expand into path mappings or server overrides only if the simple setup is not enough.
+4. Set one or two breakpoints and press `F5`.
+5. Add `pathMappings` or custom server options only if the simple setup isn't enough.
 
 ## Next steps
 
-- Continue with [Profiling](05-profiling.md) if you also want performance analysis.
-- Continue with [Troubleshooting](09-troubleshooting.md) if breakpoints do not bind or connections never arrive.
+- [Profiling](05-profiling.md) — capture performance data without leaving VS Code
+- [Troubleshooting](09-troubleshooting.md) — if breakpoints don't bind or connections never arrive

@@ -1,42 +1,56 @@
 # Testing
 
-PhpThunder integrates with the VS Code Test Explorer and can discover both PHPUnit and Pest tests.
+PhpThunder integrates with the VS Code Test Explorer and discovers both PHPUnit and Pest tests automatically. You get a visual test tree, one-click run and debug, and live pass/fail feedback — all without leaving the editor or touching the terminal.
 
-## What PhpThunder discovers
+## What the Test Explorer shows
 
-PhpThunder organizes tests by file and then by test group:
+Once PhpThunder discovers your tests, the Test Explorer panel organizes them into a hierarchy:
 
-- PHPUnit tests are grouped by class and method
-- Pest tests are grouped by describe block when one exists
-- data sets are shown as individual child items when the test framework exposes them
+- **PHPUnit:** grouped by test class, then by test method. Dataset-driven tests appear as individual children under their parent method.
+- **Pest:** grouped by `describe` block when one exists, otherwise by test name. Dataset entries are shown as individual children.
 
-This makes the built-in VS Code Test Explorer useful even in mixed PHPUnit and Pest codebases.
+A mixed PHPUnit + Pest project works fine — both appear in the same tree.
+
+<!-- MEDIA: screenshot of the Test Explorer showing a mixed PHPUnit/Pest project tree -->
+
+> 📸 _Coming soon: screenshot of the Test Explorer with grouped test results._
 
 ## Running tests
 
-Use the normal VS Code testing UI to run tests after PhpThunder has discovered them.
+Use the standard VS Code Test Explorer UI:
 
-The extension can use:
+- Click the **▶ Run** button next to a suite, class, or individual test
+- Use `Ctrl+; Ctrl+A` to run all tests in the workspace
+- Click the **▶** icon in the editor gutter next to a test method to run just that one
 
-- PHPUnit
-- Pest
-- automatic runner selection based on project contents
+> **Tip:** The gutter icon is one of the fastest ways to run a single test while you're editing the test file. Click it once to run, or right-click to get the "Debug Test" option.
 
-The runner is controlled by `phpThunder.testRunner`.
+## PHPUnit vs Pest discovery
+
+PhpThunder handles the two runners differently because their project layouts differ:
+
+|                      | PHPUnit                            | Pest                                 |
+| -------------------- | ---------------------------------- | ------------------------------------ |
+| Discovery source     | Class-based test files             | File-based `test()` / `it()` calls   |
+| Grouping             | By test class                      | By `describe` block or top-level     |
+| Config file          | `phpunit.xml` / `phpunit.xml.dist` | Same — Pest wraps PHPUnit internally |
+| Auto-detected binary | `vendor/bin/phpunit`               | `vendor/bin/pest`                    |
+
+The `auto` runner setting prefers Pest when `vendor/bin/pest` exists and falls back to PHPUnit otherwise.
 
 ## Debugging tests
 
-PhpThunder also provides a dedicated `Debug Tests` profile in the Test Explorer.
+PhpThunder provides a `Debug Tests` profile in the Test Explorer. It uses:
 
-That flow uses:
+- The active PhpThunder interpreter for the workspace
+- The configured test runner
+- The PhpThunder Xdebug debugger
 
-- the active PhpThunder interpreter for the workspace
-- the configured test runner
-- the PhpThunder debugger
+Right-click any test in the tree and choose **Debug Test**, or use the debug gutter icon. PhpThunder starts the test with Xdebug and pauses on any breakpoints you've set.
 
-If debug test runs do not start, treat the problem like a normal Xdebug setup issue and review [Debugging](04-debugging.md).
+If debug test runs don't start, treat it like a regular Xdebug setup issue — see [Debugging](04-debugging.md).
 
-## Recommended setting
+## Test runner setting
 
 ```json
 {
@@ -44,31 +58,33 @@ If debug test runs do not start, treat the problem like a normal Xdebug setup is
 }
 ```
 
-Available values:
+| Value     | Behavior                                                   |
+| --------- | ---------------------------------------------------------- |
+| `auto`    | Prefer Pest if `vendor/bin/pest` exists, otherwise PHPUnit |
+| `phpunit` | Always use PHPUnit                                         |
+| `pest`    | Always use Pest                                            |
 
-- `auto`
-- `phpunit`
-- `pest`
-
-`auto` prefers Pest when `vendor/bin/pest` exists and otherwise falls back to PHPUnit.
+Use `auto` unless the project has an unusual layout or you need to force a specific runner.
 
 ## Tips for reliable discovery
 
-- Open the project root, not only a nested source folder.
-- Make sure dependencies are installed if the test runner lives under `vendor/bin/`.
-- Reindex the project after major structural changes.
-- Keep the PHP version setting aligned with the project to reduce noisy diagnostics around tests.
+- Open the **project root** — the folder that contains `composer.json` — not a nested subfolder.
+- Run `composer install` before opening the project so `vendor/bin/phpunit` and `vendor/bin/pest` exist.
+- Reindex the project after major structural changes (`PhpThunder: Reindex Project`).
+- Keep the PHP version setting aligned with what the project actually targets to avoid false diagnostics in test files.
 
-## When tests do not appear
+## When tests don't appear
 
-Check these first:
+Work through this checklist:
 
-- `vendor/bin/phpunit` or `vendor/bin/pest` exists
-- `phpThunder.testRunner` is set correctly
-- the workspace folder is the project root
-- the interpreter can actually execute the test binary
+- `vendor/bin/phpunit` or `vendor/bin/pest` exists in the workspace
+- `phpThunder.testRunner` matches the project's actual runner
+- The workspace folder is the project root (not a src/ subdirectory)
+- The selected PHP interpreter can execute the test binary
+- The project has at least one file that follows the expected test naming convention
 
 ## Next steps
 
-- Continue with [Project configuration](07-project-configuration.md) for runner and interpreter settings.
-- Continue with [Troubleshooting](09-troubleshooting.md) if the Test Explorer remains empty.
+- [Project configuration](07-project-configuration.md) — runner and interpreter settings in detail
+- [Debugging](04-debugging.md) — if debug test runs fail to connect
+- [Troubleshooting](09-troubleshooting.md) — if the Test Explorer stays empty after setup

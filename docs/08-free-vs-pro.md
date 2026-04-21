@@ -1,62 +1,75 @@
 # Free vs Pro
 
-This page reflects the current access boundary in the extension implementation. It is intentionally practical: it focuses on which workflows you can rely on in Free mode and which workflows currently require Pro access.
+PhpThunder's free tier is genuinely capable. You get a full PHP language server, Xdebug-based debugging, test discovery, diagnostics, formatting, and Composer integration — everything you need to be productive in a PHP project without spending a cent.
+
+Pro adds the features that remove repetitive friction at scale: renaming things confidently, generating boilerplate you'd otherwise type by hand, profiling slow code, and seeing variable values inline while debugging.
+
+This page reflects the current access boundary in the extension.
 
 ## Included in Free
 
-These workflows are part of the base editing experience:
+The full base editing experience — everything in this list is available without a license:
 
-- completion, hover, go to definition, and find references
-- diagnostics, formatting, and code actions
-- PHPUnit and Pest discovery in the Test Explorer
-- Xdebug-based debugging
-- Composer commands and include-path configuration
-- interpreter management and PHP-version selection
-- TODO tools
+- **Code intelligence:** completion, hover, go-to-definition, find references, import suggestions
+- **Diagnostics:** parse errors, type analysis, PHPDoc issues, unused imports, unused private members
+- **Quick fixes and source actions:** organize imports, generate PHPDoc stubs, pick import candidates
+- **Formatting:** all formatting settings for arrays, parameters, control structures, and more
+- **PHPUnit and Pest:** full Test Explorer integration including discovery, run, and debug
+- **Xdebug debugging:** CLI launch, web server launch, and attach mode
+- **Composer helpers:** install, update, require, dump-autoload, validate
+- **Include-path and interpreter management**
+- **TODO panel tools**
 
 ## Requires Pro
 
-These workflows currently require Pro access or an active trial:
+These workflows unlock with Pro access or an active trial:
 
-- Rename Symbol
-- Generate Getter, Setter, and missing accessors
-- Implement Missing Methods
-- Code fixes from CF diagnostics
-- Profile Current File
-- Start Web Profiling
-- Open Profiler and review profiling captures
-- Debug inline values on the stopped line
+| Feature                             | Why it matters                                                                                                                                    |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Rename Symbol**                   | Safely renames a class, method, function, or variable everywhere it's used across the whole project. No search-and-replace, no missed references. |
+| **Generate Getter / Setter**        | Creates typed accessor methods for properties without writing boilerplate.                                                                        |
+| **Generate missing accessors**      | Scans a class and fills in all missing getters and setters in one action.                                                                         |
+| **Implement Missing Methods**       | Generates stubs for all abstract and interface methods a class is required to implement.                                                          |
+| **Pro code fixes (CF diagnostics)** | A set of extra quick fixes beyond the free tier that fix code-quality patterns automatically.                                                     |
+| **Profile Current File**            | Captures a Xdebug cachegrind profile for the active PHP script in one command.                                                                    |
+| **Start Web Profiling**             | Starts a local PHP server with profiling enabled so you can profile real HTTP requests.                                                           |
+| **Open Profiler**                   | Reviews and compares captured cachegrind profiles in a built-in panel.                                                                            |
+| **Inline debug values**             | Shows current variable and expression values right in the editor while a debug session is paused — no need to switch to the Variables panel.      |
 
-Pro also adds completion polish by starring the strongest matches and preselecting the best suggestion.
+Pro also adds **starred completion suggestions** — the strongest match is pre-selected and top candidates are flagged — so the completion list requires fewer keystrokes.
 
-## Quick matrix
+## Feature matrix
 
-| Workflow                         | Free         | Pro unlocks                                                           |
-| -------------------------------- | ------------ | --------------------------------------------------------------------- |
-| Code intelligence and navigation | Included     | Same core experience, plus starred completion suggestions             |
-| Diagnostics and code actions     | Included     | Same core experience, plus Pro-only code fixes                        |
-| Formatting                       | Included     | Same core experience                                                  |
-| PHPUnit and Pest workflows       | Included     | Same core experience                                                  |
-| Debugging                        | Included     | Inline debug values on the stopped line                               |
-| Composer helpers and TODO tools  | Included     | Same core experience                                                  |
-| Rename Symbol                    | Not included | Included                                                              |
-| Accessor generation              | Not included | Generate getters, setters, and missing accessors                      |
-| Implement Missing Methods        | Not included | Generate contract stubs for abstract/interface methods                |
-| Profiling workflows              | Not included | Profile current file, start web profiling, and open profiler captures |
+| Workflow                         | Free | Pro                     |
+| -------------------------------- | ---- | ----------------------- |
+| Code intelligence & navigation   | ✓    | ✓ + starred suggestions |
+| Diagnostics & basic code actions | ✓    | ✓ + Pro code fixes      |
+| Formatting                       | ✓    | ✓                       |
+| PHPUnit & Pest (Test Explorer)   | ✓    | ✓                       |
+| Xdebug debugging                 | ✓    | ✓ + inline debug values |
+| Composer helpers & TODO tools    | ✓    | ✓                       |
+| Rename Symbol                    | —    | ✓                       |
+| Accessor generation              | —    | ✓                       |
+| Implement Missing Methods        | —    | ✓                       |
+| Profiling (CLI & web)            | —    | ✓                       |
 
-## Trial and activation states
+## Trial and activation
 
-The status bar communicates the current access state. Depending on your setup, you may see:
+PhpThunder offers a **30-day Pro trial** — full access to every Pro feature, no credit card required. Start a trial or activate a license with `PhpThunder: Activate License`.
 
-- Free
-- Trial
-- Pro
-- Grace Period
+The status bar shows your current state:
 
-Use `PhpThunder: Activate License` to open the license page and either start from your account or enter a license key directly.
+| Status             | Meaning                                                           |
+| ------------------ | ----------------------------------------------------------------- |
+| `PHP Free`         | Base features only                                                |
+| `PHP Trial`        | Full Pro access during the trial period                           |
+| `PHP Pro`          | Active Pro license                                                |
+| `PHP Grace Period` | License recently expired; Pro features stay available temporarily |
+
+For pricing plans and subscription details, visit [sailantis.io](https://sailantis.io).
 
 ## Related guides
 
-- [Installation and activation](02-installation-and-activation.md)
-- [Profiling](05-profiling.md)
-- [Troubleshooting](09-troubleshooting.md)
+- [Installation and activation](02-installation-and-activation.md) — activate a trial or Pro license
+- [Profiling](05-profiling.md) — Pro profiling workflows in detail
+- [FAQ](10-faq.md) — common questions about licensing and Pro features
