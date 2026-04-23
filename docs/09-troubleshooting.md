@@ -1,143 +1,140 @@
 # Troubleshooting
 
-This page covers the problems that most commonly block a smooth PhpThunder experience. Start with the Quick wins section — most issues are resolved in one step.
+This page collects the support checks that usually resolve setup and runtime issues. Start with Quick wins first; most problems collapse to one of those checks.
 
 ## Quick wins
 
-If something feels off, try these first before digging deeper:
+| Symptom                                 | Fix                                                                                |
+| --------------------------------------- | ---------------------------------------------------------------------------------- |
+| Completion or hover is missing          | Run `PhpThunder: Reindex Project`                                                  |
+| Wrong diagnostics for language features | Run `PhpThunder: Select PHP Version` and choose the project level                  |
+| Vendor symbols are missing              | Run `composer install`, then `PhpThunder: Reindex Project`                         |
+| Tests do not appear in Test Explorer    | Confirm `vendor/bin/phpunit` or `vendor/bin/pest` exists, then reindex the project |
 
-| Symptom                                 | Fix                                                                                            |
-| --------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| Completion or hover is missing          | Run `PhpThunder: Reindex Project`                                                              |
-| Wrong diagnostics for language features | Run `PhpThunder: Select PHP Version` and set the correct level                                 |
-| Vendor symbols are missing              | Run `composer install`, then `PhpThunder: Reindex Project`                                     |
-| Tests don't appear in Test Explorer     | Confirm `vendor/bin/phpunit` or `vendor/bin/pest` exists and run `PhpThunder: Reindex Project` |
+If the quick wins do not help, use the more specific sections below.
 
-If a quick win doesn't solve it, find the relevant section below.
+## Stale index or missing symbols
 
----
-
-## PhpThunder doesn't see recent project changes
-
-**Symptoms:** Completion is stale, recently added classes don't resolve, renamed files still show the old name.
-
-**Fix:**
+Completion, hover, references, and renamed files can lag behind after a structural change.
 
 1. Save the affected files.
 2. Run `PhpThunder: Reindex Project`.
-3. Wait for the scan to complete — the status bar shows progress.
+3. Wait for the scan to finish; the status bar shows progress.
 
 This is especially important after large refactors, Composer operations, or include-path changes. Most single-file edits are picked up automatically; reindex is for changes that affect the whole project graph.
 
----
-
 ## Vendor classes or Composer symbols are missing
 
-**Symptoms:** Third-party classes show as undefined, completion doesn't include Composer dependencies, `use` statements can't be resolved.
+When third-party classes show as undefined, work through this checklist:
 
-**Fix:** Work through this checklist:
-
-- Confirm `composer install` has been run and `vendor/` is populated.
-- Confirm the workspace root is the project root (the folder containing `composer.json`), not a nested subfolder.
-- Check that `phpThunder.includePaths` includes any non-standard source directories the project depends on.
+- Run `composer install` and confirm `vendor/` is populated.
+- Open the project root, meaning the folder that contains `composer.json`.
+- Check `phpThunder.includePaths` for any non-standard source directories the project depends on.
 - Run `PhpThunder: Composer Dump Autoload` or `PhpThunder: Reindex Project` after autoload changes.
 
-> **Note:** `phpThunder.diagnostics.enableVendor` is off by default, so vendor files intentionally don't behave like first-party code unless you enable that setting.
+> **Note:** `phpThunder.diagnostics.enableVendor` is off by default, so vendor files intentionally do not behave like first-party code unless that setting is enabled.
 
----
+## Wrong PHP version or binary
 
-## The wrong PHP version is used for analysis
+### Wrong PHP version used for analysis
 
-**Symptoms:** False-positive diagnostics about features that actually exist in the project's PHP version, or missing diagnostics for features that aren't supported.
+False-positive diagnostics about features or syntax usually mean the selected language level is too low or too high.
 
-**Fix:** Run `PhpThunder: Select PHP Version` and choose the version the project actually targets.
+- Run `PhpThunder: Select PHP Version`.
+- Choose the version the project actually targets.
 
-This is the first setting to check when you see version-feature warnings that don't match reality.
+### Wrong PHP binary selected
 
----
+Debugging, tests, or Composer commands can use the wrong interpreter when the workspace is pointed at the wrong catalog entry.
 
-## The wrong PHP binary is used
+- Run `PhpThunder: Configure PHP Interpreters`.
+- Confirm the expected PHP binary exists in the catalog.
+- Confirm the intended interpreter is selected for the current workspace.
+- Confirm the selected interpreter can actually execute project commands.
 
-**Symptoms:** Debugging or tests use a different PHP version than expected, Composer commands fail, Xdebug checks fail for an interpreter that should have it.
+## Include-path changes do not take effect
 
-**Fix:** Run `PhpThunder: Configure PHP Interpreters` and verify:
+After changing `phpThunder.includePaths`, the indexing graph needs a refresh.
 
-- The correct PHP binary is in the interpreter catalog.
-- The intended interpreter is selected for the current workspace.
-- The selected interpreter can actually execute project commands.
+- Run `PhpThunder: Reindex Project`, or
+- Reload the VS Code window with `Developer: Reload Window`
 
----
+## Debugging does not start or breakpoints do not bind
 
-## Include-path changes don't take effect
-
-**Symptoms:** Newly added include paths don't resolve symbols, extra directories aren't being analyzed.
-
-**Fix:** After editing `phpThunder.includePaths`:
-
-- Run `PhpThunder: Reindex Project`, **or**
-- Reload the VS Code window (`Developer: Reload Window`)
-
-Include-path changes affect the indexing graph and aren't picked up without a refresh.
-
----
-
-## Debugging doesn't start or breakpoints don't bind
-
-**Symptoms:** `F5` fails with a connection error, breakpoints show as unverified, execution runs to completion without pausing.
-
-**Fix:** Check these points:
+If `F5` fails, breakpoints stay unverified, or execution runs straight through, check the basics first:
 
 - Xdebug is installed and loaded for the selected PHP binary (`php -m | grep xdebug`).
-- The debug port in `launch.json` matches your Xdebug configuration (usually `9003`).
-- Enable `generateIni` in the launch config if you want PhpThunder to generate a helper ini file automatically.
-- For Docker or remote paths, `pathMappings` keys are the _remote_ paths and values are the _local_ paths — getting this backwards is a common mistake.
+- The debug port in `launch.json` matches the Xdebug configuration, usually `9003`.
+- `generateIni` is enabled if PhpThunder should generate a helper ini file automatically.
+- For Docker or remote paths, `pathMappings` keys are the remote paths and values are the local paths.
 - The launch mode (`cli`, `web`, or `attach`) matches the actual workflow.
 
-Start with the simplest possible configuration and add server overrides or path mappings only when the basic setup works.
+Start with the simplest possible configuration and add server overrides or path mappings only after the basic setup works.
 
----
+## Profiling does not produce a capture
 
-## Profiling doesn't produce a capture
+When no cachegrind file appears under `.phpthunder/profiles/`, check:
 
-**Symptoms:** No cachegrind file appears under `.phpthunder/profiles/`, the profiler panel is empty.
-
-**Fix:** Check these points:
-
-- You have Pro access or an active trial.
+- Pro access or an active trial is available.
 - Xdebug is loaded for the selected interpreter.
-- `phpThunder.profiling.docRoot` exists in the workspace (for web profiling).
+- `phpThunder.profiling.docRoot` exists in the workspace for web profiling.
 - No other process is using the configured web port.
-- Check the `PHP Profiler` output channel for detailed error messages.
-
----
+- The `PHP Profiler` output channel shows no startup errors.
 
 ## Tests are not discovered
 
-**Symptoms:** The Test Explorer shows no tests, or shows far fewer than expected.
-
-**Fix:** Check these points:
+When the Test Explorer stays empty or only shows part of the suite, verify:
 
 - The project contains PHPUnit or Pest test files that follow the expected naming convention.
-- `vendor/bin/phpunit` or `vendor/bin/pest` exists (run `composer install` first).
-- `phpThunder.testRunner` matches the project's actual runner, or is set to `auto`.
+- `vendor/bin/phpunit` or `vendor/bin/pest` exists.
+- `phpThunder.testRunner` matches the project's runner, or is set to `auto`.
 - The workspace root is the project root, not a nested source folder.
 - The configured PHP interpreter can execute the test binary.
 
----
+## Activation, trial, and license state
 
-## I need more detail for a bug report
+PhpThunder offers a free tier, a 30-day Pro trial, and ongoing Pro access. License and trial flows start from `PhpThunder: Activate License`.
 
-The LSP trace log is the most useful artifact for diagnosing PhpThunder behavior.
+From the activation page, the available flows are:
 
-**Steps:**
+- sign in with a Sailantis account to fetch and activate an existing license
+- enter a license key directly when one is already available
 
-1. Set `phpThunder.trace.server` to `messages` or `verbose` in your workspace settings.
+The status bar entry shows the current access level:
+
+| Status bar shows   | What it means                                                       |
+| ------------------ | ------------------------------------------------------------------- |
+| `PHP Free`         | Base features only; no trial active                                 |
+| `PHP Trial`        | Full Pro access for the trial period                                |
+| `PHP Pro`          | Active Pro license                                                  |
+| `PHP Grace Period` | License recently expired; Pro features remain available temporarily |
+
+If a Pro license lapses, PhpThunder enters Grace Period instead of blocking Pro features immediately. Reactivate or renew from `PhpThunder: Activate License`.
+
+Plan limits still apply to seats and machine count. For current pricing and plan details, see the [Sailantis website](https://sailantis.com).
+
+## Compatibility
+
+PhpThunder supports:
+
+- PHP 5.6 through 8.5
+- Windows, macOS, and Linux
+- VS Code 1.82.0 or later
+- WSL via the Remote - WSL extension
+- Remote containers and remote SSH sessions
+- Multi-root workspaces with per-folder PHP settings
+
+## Reporting a bug
+
+The LSP trace log is the most useful artifact when a bug report needs more detail.
+
+1. Set `phpThunder.trace.server` to `messages` or `verbose` in the workspace settings.
 2. Reproduce the problem.
-3. Open the `PhpThunder Language Server` output channel (`View → Output` → select from the dropdown).
+3. Open the `PhpThunder Language Server` output channel.
 4. Copy the relevant portion of the log.
-5. Reset `phpThunder.trace.server` back to `off` when you're done.
+5. Reset `phpThunder.trace.server` back to `off` when finished.
 
-**Useful context to include in a bug report:**
+Useful context for a bug report:
 
 - VS Code version
 - PhpThunder version
@@ -145,12 +142,10 @@ The LSP trace log is the most useful artifact for diagnosing PhpThunder behavior
 - Whether the project uses Composer, Pest, PHPUnit, Xdebug, or custom include paths
 - The minimal code or project layout that reproduces the issue
 
----
-
 ## Related guides
 
+- [Installation and activation](02-installation-and-activation.md) — setup, interpreter selection, and license activation
 - [Project configuration](07-project-configuration.md) — settings reference
 - [Debugging](04-debugging.md) — Xdebug setup in detail
 - [Profiling](05-profiling.md) — profiling requirements and settings
 - [Testing](06-testing.md) — test discovery and runner setup
-- [FAQ](10-faq.md) — common questions about features and licensing

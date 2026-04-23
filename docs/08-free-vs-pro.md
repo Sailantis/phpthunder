@@ -66,10 +66,10 @@ The status bar shows your current state:
 | `PHP Pro`          | Active Pro license                                                |
 | `PHP Grace Period` | License recently expired; Pro features stay available temporarily |
 
-For pricing plans and subscription details, visit [sailantis.io](https://sailantis.io).
+For pricing plans and subscription details, visit [sailantis.com](https://sailantis.com).
 
 ## Related guides
 
 - [Installation and activation](02-installation-and-activation.md) — activate a trial or Pro license
 - [Profiling](05-profiling.md) — Pro profiling workflows in detail
-- [FAQ](10-faq.md) — common questions about licensing and Pro features
+- [Troubleshooting](09-troubleshooting.md) — activation, trial, and compatibility notes

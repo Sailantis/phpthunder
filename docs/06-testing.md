@@ -1,10 +1,10 @@
 # Testing
 
-PhpThunder integrates with the VS Code Test Explorer and discovers both PHPUnit and Pest tests automatically. You get a visual test tree, one-click run and debug, and live pass/fail feedback — all without leaving the editor or touching the terminal.
+PhpThunder integrates with the VS Code Test Explorer and discovers both PHPUnit and Pest tests automatically. The result is a visual test tree, one-click run and debug, and live pass/fail feedback — all without leaving the editor or touching the terminal.
 
 ## What the Test Explorer shows
 
-Once PhpThunder discovers your tests, the Test Explorer panel organizes them into a hierarchy:
+Once PhpThunder discovers the tests, the Test Explorer panel organizes them into a hierarchy:
 
 - **PHPUnit:** grouped by test class, then by test method. Dataset-driven tests appear as individual children under their parent method.
 - **Pest:** grouped by `describe` block when one exists, otherwise by test name. Dataset entries are shown as individual children.
@@ -23,7 +23,7 @@ Use the standard VS Code Test Explorer UI:
 - Use `Ctrl+; Ctrl+A` to run all tests in the workspace
 - Click the **▶** icon in the editor gutter next to a test method to run just that one
 
-> **Tip:** The gutter icon is one of the fastest ways to run a single test while you're editing the test file. Click it once to run, or right-click to get the "Debug Test" option.
+> **Tip:** The gutter icon is one of the fastest ways to run a single test during editing. Click it once to run, or right-click to get the "Debug Test" option.
 
 ## PHPUnit vs Pest discovery
 
@@ -46,7 +46,7 @@ PhpThunder provides a `Debug Tests` profile in the Test Explorer. It uses:
 - The configured test runner
 - The PhpThunder Xdebug debugger
 
-Right-click any test in the tree and choose **Debug Test**, or use the debug gutter icon. PhpThunder starts the test with Xdebug and pauses on any breakpoints you've set.
+Right-click any test in the tree and choose **Debug Test**, or use the debug gutter icon. PhpThunder starts the test with Xdebug and pauses on any breakpoints in place.
 
 If debug test runs don't start, treat it like a regular Xdebug setup issue — see [Debugging](04-debugging.md).
 
@@ -64,7 +64,7 @@ If debug test runs don't start, treat it like a regular Xdebug setup issue — s
 | `phpunit` | Always use PHPUnit                                         |
 | `pest`    | Always use Pest                                            |
 
-Use `auto` unless the project has an unusual layout or you need to force a specific runner.
+Use `auto` unless the project has an unusual layout or a specific runner must be forced.
 
 ## Tips for reliable discovery
 

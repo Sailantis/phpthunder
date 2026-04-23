@@ -2,9 +2,9 @@
 
 > **Pro feature:** Profiling requires Pro access or an active trial.
 
-Performance problems are often invisible until they're not. A slow page load, a sluggish CLI command, an API endpoint that takes three times as long as expected — these issues tend to hide in the call stack rather than the obvious hot path you'd guess. PhpThunder's profiler integrates directly with Xdebug's cachegrind output and a built-in panel so you can find the slow line, not just the slow request, without ever leaving VS Code.
+Performance problems are often invisible until they are not. A slow page load, a sluggish CLI command, or an API endpoint that takes much longer than expected tends to hide in the call stack rather than the obvious hot path. PhpThunder's profiler integrates directly with Xdebug's cachegrind output and a built-in panel, making it easier to find the slow line rather than just the slow request, without leaving VS Code.
 
-## What you get
+## What is included
 
 - Profile capture for CLI scripts (the currently open file)
 - Web profiling with a local PHP server for request-driven workflows
@@ -17,7 +17,7 @@ Performance problems are often invisible until they're not. A slow page load, a 
 - A configured PHP interpreter for the workspace
 - Xdebug loaded for that interpreter
 
-If Xdebug is missing when you start a profiling session, PhpThunder stops early and tells you exactly which binary failed the check.
+If Xdebug is missing when a profiling session starts, PhpThunder stops early and reports which binary failed the check.
 
 > **Tip:** The same Xdebug installation used for debugging works for profiling too. No extra configuration is required.
 
@@ -27,12 +27,12 @@ Use `PhpThunder: Profile Current File` for a quick CLI-style profile of whatever
 
 **Step-by-step:**
 
-1. Open the PHP file you want to measure.
+1. Open the PHP file to measure.
 2. Run `PhpThunder: Profile Current File` from the command palette.
 3. Wait for the script to complete — PhpThunder runs it with Xdebug profiling enabled.
 4. When the run finishes, the profiler panel opens automatically with the new capture loaded.
 
-PhpThunder writes a cachegrind file to `.phpthunder/profiles/` and opens the panel so you can inspect it.
+PhpThunder writes a cachegrind file to `.phpthunder/profiles/` and opens the panel for inspection.
 
 <!-- MEDIA: screenshot of the profiler panel showing a call tree / hotspot list -->
 
@@ -40,7 +40,7 @@ PhpThunder writes a cachegrind file to `.phpthunder/profiles/` and opens the pan
 
 ## Start web profiling
 
-Use `PhpThunder: Start Web Profiling` when the code you want to measure runs in response to an HTTP request rather than as a standalone script. This is the right choice for:
+Use `PhpThunder: Start Web Profiling` when the code to measure runs in response to an HTTP request rather than as a standalone script. This is the right choice for:
 
 - Framework entry points and controllers
 - Routes that depend on HTTP context, sessions, or middleware
@@ -50,9 +50,9 @@ Use `PhpThunder: Start Web Profiling` when the code you want to measure runs in 
 
 1. Run `PhpThunder: Start Web Profiling` from the command palette.
 2. PhpThunder checks Xdebug on the selected interpreter, then starts a local PHP server.
-3. Open your browser and navigate to the page or endpoint you want to profile.
+3. Open a browser and navigate to the page or endpoint to profile.
 4. PhpThunder captures the cachegrind output for that request.
-5. When you're done, run `PhpThunder: Stop Web Profiling Server`.
+5. When finished, run `PhpThunder: Stop Web Profiling Server`.
 6. Open the profiler panel with `PhpThunder: Open Profiler` to review the capture.
 
 ## Where profiles are stored
@@ -81,17 +81,17 @@ Example:
 
 ## Reviewing existing captures
 
-You don't need to capture a new profile to use the panel. Run `PhpThunder: Open Profiler` at any time to reopen the panel and inspect saved cachegrind files. This is useful when:
+A new capture is not required to use the panel. Run `PhpThunder: Open Profiler` at any time to reopen the panel and inspect saved cachegrind files. This is useful when:
 
-- You already have captured profiles from a previous session
-- You want to compare results from multiple runs side by side
-- You profiled a long-running process and want to examine the output after the fact
+- Previous captures are already available
+- Multiple runs need to be compared side by side
+- A long-running process was profiled and the output needs to be examined after the fact
 
 ## Troubleshooting checklist
 
 - **No profile generated:** Confirm Xdebug is loaded for the selected interpreter (`php -m | grep xdebug`).
 - **Web profiling fails to start:** Check that `phpThunder.profiling.docRoot` exists in the workspace and no other process is using the configured port.
-- **Panel shows nothing:** Make sure you actually have cachegrind files in `.phpthunder/profiles/`. Run a fresh capture if the folder is empty.
+- **Panel shows nothing:** Make sure cachegrind files exist in `.phpthunder/profiles/`. Run a fresh capture if the folder is empty.
 - **Need more detail:** Open the `PHP Profiler` output channel for verbose log output from the profiling session.
 
 ## Next steps

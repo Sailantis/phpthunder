@@ -33,11 +33,11 @@ Useful commands:
 
 ### Composer and include paths
 
-| Setting                           | What it does                                                             |
-| --------------------------------- | ------------------------------------------------------------------------ |
-| `phpThunder.composer.mode`        | How PhpThunder finds Composer: `auto`, `projectPhar`, or `custom`.       |
-| `phpThunder.composer.projectPhar` | Path to a project-local `composer.phar`, relative to the workspace root. |
-| `phpThunder.includePaths`         | Extra PHP directories to index beyond what Composer provides.            |
+| Setting                           | What it does                                                                                                                                            |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `phpThunder.composer.mode`        | How PhpThunder finds Composer: `auto`, `projectPhar`, or `custom`.                                                                                      |
+| `phpThunder.composer.projectPhar` | Path to a project-local `composer.phar`, relative to the workspace root.                                                                                |
+| `phpThunder.includePaths`         | Extra PHP directories to index beyond what Composer provides. Paths from the global, workspace, and matching folder scopes are merged for each project. |
 
 **When to change:** Most projects work fine with `auto`. Set `projectPhar` when the project ships its own `composer.phar` under a `tools/` or `build/` folder. Use `includePaths` for legacy codebases, internal SDKs, or monorepo packages that aren't registered in `composer.json`.
 
@@ -107,15 +107,32 @@ These accept `preserve`, `force-braces`, or `force-alternative`:
 
 ## Diagnostics & code fixes
 
-| Setting                                       | Default | What it does                                               |
-| --------------------------------------------- | ------- | ---------------------------------------------------------- |
-| `phpThunder.diagnostics.enableVendor`         | `false` | Run diagnostics on files under `vendor/`.                  |
-| `phpThunder.codeFixes.enabled`                | `true`  | Enable code-fix hints and quick actions.                   |
-| `phpThunder.codeFixes.disabledFixes`          | `[]`    | Disable specific fix IDs (e.g., `["CF001"]`).              |
-| `phpThunder.diagnosticsSummary.enabled`       | `true`  | Show per-file diagnostics summary indicators.              |
-| `phpThunder.diagnosticsSummary.inlineSummary` | `true`  | Show a clickable CodeLens summary at the top of each file. |
+| Setting                                       | Default | What it does                                                         |
+| --------------------------------------------- | ------- | -------------------------------------------------------------------- |
+| `phpThunder.diagnostics.enableVendor`         | `false` | Run diagnostics on files under `vendor/`.                            |
+| `phpThunder.codeFixes.enabled`                | `true`  | Enable code-fix hints and quick actions.                             |
+| `phpThunder.codeFixes.disabledFixes`          | `[]`    | Disable specific fix IDs. Use the catalog below for the current IDs. |
+| `phpThunder.diagnosticsSummary.enabled`       | `true`  | Show per-file diagnostics summary indicators.                        |
+| `phpThunder.diagnosticsSummary.inlineSummary` | `true`  | Show a clickable CodeLens summary at the top of each file.           |
 
 **When to change:** Enable `diagnostics.enableVendor` only when you're actually working on a Composer package or need to trace a problem into a dependency — it increases analysis load and noise. Disable specific fix IDs in `disabledFixes` when a rule doesn't suit the project.
+
+### Code fix IDs
+
+`phpThunder.codeFixes.disabledFixes` accepts the stable code-fix IDs listed below.
+
+| ID       | What it disables                                                         |
+| -------- | ------------------------------------------------------------------------ |
+| `CF001`  | Short array syntax (`array()` -> `[]`)                                   |
+| `CF003`  | `is_null($x)` -> `$x === null`                                           |
+| `CF004`  | Loose null comparison (`== null` -> `=== null`, `!= null` -> `!== null`) |
+| `CF005`  | `count($x) > 0` -> `!empty($x)`                                          |
+| `CF011`  | Redundant `else` after a `return`                                        |
+| `CF012`  | Boolean ternary simplification                                           |
+| `CF012b` | Boolean `if`/`else` simplification to `return (bool) ...`                |
+| `CF014`  | Inline variable (`return $x;` style simplification)                      |
+| `CF020`  | String concatenation to interpolation                                    |
+| `CF032`  | Single-return closure to arrow function                                  |
 
 ---
 

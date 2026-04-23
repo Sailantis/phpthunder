@@ -1,28 +1,28 @@
 # Debugging
 
-PhpThunder includes a full PHP debugger for VS Code, built on top of Xdebug. It handles the repetitive parts — finding your PHP binary, generating the right ini configuration, starting the server — so you can focus on the actual problem.
+PhpThunder includes a full PHP debugger for VS Code, built on top of Xdebug. It handles the repetitive parts — finding the PHP binary, generating the right ini configuration, starting the server — while keeping the actual problem in focus.
 
-Xdebug is the engine. PhpThunder wires it up, manages the connection, and shows you breakpoints, call stacks, variable values, and (in Pro) inline values directly in the editor.
+Xdebug is the engine. PhpThunder wires it up, manages the connection, and shows breakpoints, call stacks, variable values, and (in Pro) inline values directly in the editor.
 
-## Before you start
+## Prerequisites
 
-You need:
+Required items:
 
 - A PHP interpreter configured for the workspace (see [Installation and activation](02-installation-and-activation.md))
 - Xdebug installed and enabled for that interpreter
-- Port `9003` reachable from your PHP process (the default Xdebug port)
+- Port `9003` reachable from the PHP process (the default Xdebug port)
 
 The debug type for all launch configurations is `phpThunder`.
 
-> **Tip:** Not sure if Xdebug is loaded? PhpThunder checks the selected interpreter when you start a debug session and tells you clearly if the extension is missing or not enabled.
+> **Tip:** If Xdebug is missing, PhpThunder checks the selected interpreter when a debug session starts and reports the issue clearly.
 
-## Three steps to your first breakpoint
+## Three steps to the first breakpoint
 
 1. Create a `launch.json` with a single `launch` configuration (see the example below).
 2. Open a PHP file and click in the gutter to set a breakpoint.
 3. Press `F5` — PhpThunder launches the script, connects to Xdebug, and pauses on the breakpoint.
 
-That's the whole flow for local CLI scripts. Web and remote scenarios add a few more settings but follow the same idea.
+That is the whole flow for local CLI scripts. Web and remote scenarios add a few more settings but follow the same idea.
 
 <!-- MEDIA: screenshot of a debug session paused at a breakpoint with inline variable values visible -->
 
@@ -105,11 +105,11 @@ When `mode` is `"web"`, the nested `server` object controls the local HTTP serve
 | `webPort`     | Preferred HTTP port                             |
 | `openBrowser` | `"external"`, `"webview"`, `"ask"`, or `false`  |
 
-Web mode is a good fit for framework entry points, route testing, or any workflow where a browser request drives the execution path you want to debug.
+Web mode is a good fit for framework entry points, route testing, or any workflow where a browser request drives the execution path.
 
 ## Remote and container debugging
 
-Use `attach` mode with `pathMappings` when PHP runs somewhere other than your local workspace — a Docker container, a remote VM, or a cloud dev environment.
+Use `attach` mode with `pathMappings` when PHP runs somewhere other than the local workspace — a Docker container, a remote VM, or a cloud dev environment.
 
 ```json
 {
@@ -128,7 +128,7 @@ Use `attach` mode with `pathMappings` when PHP runs somewhere other than your lo
 
 ## Inline debug values (Pro)
 
-With a Pro license, PhpThunder shows the current value of variables and expressions inline in the editor — right next to the code — while execution is paused. This means you can often understand the program state at a glance without switching to the Variables panel.
+With a Pro license, PhpThunder shows the current value of variables and expressions inline in the editor — right next to the code — while execution is paused. This makes it easier to understand the program state at a glance without switching to the Variables panel.
 
 ## A simple debug routine
 

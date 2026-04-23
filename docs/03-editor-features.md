@@ -1,6 +1,6 @@
 # Editor features
 
-PhpThunder is first and foremost an editing toolchain. This page covers the workflows that make a real difference during everyday PHP development — from the moment you start typing to the moment you commit.
+PhpThunder is first and foremost an editing toolchain. This page covers the workflows that matter during everyday PHP development — from the first keystroke to the final commit.
 
 ## At a glance
 
@@ -15,11 +15,11 @@ PhpThunder is first and foremost an editing toolchain. This page covers the work
 
 ## Code intelligence
 
-PhpThunder provides the core IDE behaviors you'd expect in a well-equipped PHP workspace.
+PhpThunder provides the core IDE behaviors expected in a well-equipped PHP workspace.
 
 ### Completion
 
-As you type, PhpThunder suggests global symbols (classes, functions, constants), class members, static access, and namespaced identifiers. The suggestions include method signatures, property types, and PHPDoc summaries so you don't need to jump to the definition just to check a parameter name.
+As code is entered, PhpThunder suggests global symbols (classes, functions, constants), class members, static access, and namespaced identifiers. The suggestions include method signatures, property types, and PHPDoc summaries, keeping parameter names close at hand.
 
 > **Example:** Start typing `new Http` in a Laravel project and PhpThunder completes to `Illuminate\Http\Request`, adding the `use` statement at the top of the file if it's not already there.
 
@@ -29,7 +29,7 @@ As you type, PhpThunder suggests global symbols (classes, functions, constants),
 
 ### Hover
 
-Hover over any symbol to see its type signature, return type, parameters, and PHPDoc — including documentation from Composer dependencies. No need to leave the file you're working on.
+Hover over any symbol to see its type signature, return type, parameters, and PHPDoc — including documentation from Composer dependencies. No need to leave the current file.
 
 <!-- MEDIA: screenshot of hover showing type + PHPDoc -->
 
@@ -37,11 +37,11 @@ Hover over any symbol to see its type signature, return type, parameters, and PH
 
 ### Go to definition and find references
 
-`F12` jumps to the definition of any symbol. `Shift+F12` (or right-click → Find All References) shows everywhere a symbol is used, across the entire project including `vendor/` when you've opted into vendor analysis.
+`F12` jumps to the definition of any symbol. `Shift+F12` (or right-click → Find All References) shows everywhere a symbol is used, across the entire project, including `vendor/` when vendor analysis is enabled.
 
 ### Import assistance
 
-When you use a short class name that PhpThunder can't resolve, it offers to add the missing `use` statement. When there are multiple candidates (e.g., both `App\Request` and `Illuminate\Http\Request`), it shows a picker.
+When a short class name cannot be resolved, PhpThunder offers to add the missing `use` statement. When multiple candidates exist (e.g., both `App\Request` and `Illuminate\Http\Request`), it shows a picker.
 
 > **Tip:** `PhpThunder: Organize Imports` removes unused `use` statements and sorts the remaining ones. Bind it to a key or run it as a source action on save.
 
@@ -49,7 +49,7 @@ When you use a short class name that PhpThunder can't resolve, it offers to add 
 
 PhpThunder publishes diagnostics for:
 
-- **Parse and syntax problems** — caught as you type, no save needed
+- **Parse and syntax problems** — caught during typing, no save needed
 - **Type analysis** — mismatched argument types, wrong return types, undefined properties
 - **PHP version mismatches** — using PHP 8.1 named arguments in a project targeting 8.0
 - **PHPDoc issues** — incorrect `@param` types, missing `@return` annotations
@@ -64,7 +64,7 @@ Quick fixes and source actions are available from the lightbulb (💡) or via `C
 - **Generate PHPDoc stub** — scaffold a `/** */` block for any method or property
 - **Pick import candidate** — resolve ambiguous short names with a picker
 
-> **Note:** Vendor file diagnostics are off by default to keep the noise level low. Turn them on with `phpThunder.diagnostics.enableVendor: true` if you want full analysis of third-party code.
+> **Note:** Vendor file diagnostics are off by default to keep the noise level low. Enable `phpThunder.diagnostics.enableVendor: true` for full analysis of third-party code.
 
 ## Rename Symbol (Pro)
 
@@ -76,7 +76,7 @@ Quick fixes and source actions are available from the lightbulb (💡) or via `C
 
 ## Code generation (Pro)
 
-PhpThunder can generate boilerplate so you don't have to:
+PhpThunder can generate boilerplate:
 
 - **Generate Getter / Setter** — creates accessor methods for properties, respecting the property type and PHPDoc
 - **Generate missing accessors** — scans a class and offers to fill in any getters or setters that don't exist yet
@@ -86,7 +86,7 @@ These are available as quick fixes (💡) directly on the class or property.
 
 ## Formatting
 
-PhpThunder's formatter is configurable without being opinionated by default. It can preserve your existing style or enforce a specific layout — your call.
+PhpThunder's formatter is configurable without being opinionated by default. Existing style can be preserved, or a specific layout can be enforced.
 
 Configurable aspects include:
 
@@ -98,9 +98,32 @@ Configurable aspects include:
 
 All formatting settings live under `phpThunder.formatting.*`. See [Project configuration](07-project-configuration.md#formatting) for the full list.
 
+### EditorConfig
+
+PhpThunder's formatter also reads and applies .editorconfig files. The language server walks upward from the file's directory collecting `.editorconfig` files (stopping at the first file with `root = true`) and merges the resulting values with VS Code's formatting options before formatting.
+
+Supported EditorConfig properties (recognized and applied):
+
+- `indent_style` — "tab" or "space", sets whether the formatter uses tabs or spaces.
+- `indent_size` — numeric or "tab", sets the indent size (when "tab" the `tab_width` is used if present).
+- `tab_width` — numeric, controls how many spaces a tab represents and may influence `indent_size`.
+- `end_of_line` — "lf" or "crlf", controls the line-ending sequence used when reformatting.
+- `insert_final_newline` — `true`/`false`, whether a final newline is ensured at EOF.
+- `trim_trailing_whitespace` — `true`/`false`, whether trailing whitespace is removed on formatted lines.
+
+The server supports the usual EditorConfig glob patterns (wildcards `*` and `**`, `?`, character classes `[...]`, and alternation `{a,b}`), and anchored patterns starting with `/` are honored. Parsed .editorconfig files are cached by the server and invalidated when the file size or modification time changes.
+
+Where this is implemented:
+
+- Server-side parsing and merge: [pkg/formatter/editorconfig.go](pkg/formatter/editorconfig.go)
+- Formatting invocation and options merge: [pkg/lsp/handlers_formatting.go](pkg/lsp/handlers_formatting.go#L20-L40)
+- VS Code provider that delegates formatting to the server: [extension/src/formattingProviders.ts](extension/src/formattingProviders.ts)
+
+When both VS Code/editor settings and `.editorconfig` provide values, the server starts from VS Code's `editor` formatting options and overrides only the fields explicitly set by `.editorconfig`.
+
 ## TODO workflows
 
-The TODO panel scans your codebase for comment markers (`TODO`, `FIXME`, etc.) and surfaces them in one place.
+The TODO panel scans the codebase for comment markers (`TODO`, `FIXME`, etc.) and surfaces them in one place.
 
 Key commands:
 
@@ -113,7 +136,7 @@ This is especially handy in larger codebases where TODOs scatter across dozens o
 
 ## Composer helpers
 
-PhpThunder wraps common Composer operations so you can run them without leaving the editor:
+PhpThunder wraps common Composer operations for running them without leaving the editor:
 
 - `PhpThunder: Composer Install`
 - `PhpThunder: Composer Update`
@@ -121,11 +144,11 @@ PhpThunder wraps common Composer operations so you can run them without leaving 
 - `PhpThunder: Composer Dump Autoload`
 - `PhpThunder: Composer Validate`
 
-Output from Composer appears in the PhpThunder output channel so you can see what changed.
+Output from Composer appears in the PhpThunder output channel, where the changes are visible.
 
 ## Next steps
 
-- [Debugging](04-debugging.md) — set up Xdebug and start your first debug session
+- [Debugging](04-debugging.md) — set up Xdebug and start debugging
 - [Project configuration](07-project-configuration.md) — all formatting, diagnostic, and code-fix settings
 - [Free vs Pro](08-free-vs-pro.md) — full breakdown of which features require a Pro license
 - [Troubleshooting](09-troubleshooting.md) — if the editor state doesn't match the project
