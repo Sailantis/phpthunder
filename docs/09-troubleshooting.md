@@ -23,6 +23,30 @@ Completion, hover, references, and renamed files can lag behind after a structur
 
 This is especially important after large refactors, Composer operations, or include-path changes. Most single-file edits are picked up automatically; reindex is for changes that affect the whole project graph.
 
+## Reset extension state
+
+Use this only when PhpThunder still behaves incorrectly after reindexing and normal configuration checks.
+
+1. Run `PhpThunder: Reset Extension`.
+2. Confirm the warning.
+3. Let VS Code reload the window.
+
+Reset clears PhpThunder local state on this machine:
+
+- global storage and caches
+- local license and trial data plus the installation identity
+- interpreter catalog and Composer configuration
+- all `phpThunder.*` settings at global, workspace, and workspace-folder scope
+- saved PhpThunder view state such as TODO filters and grouping
+
+Reset does not clear:
+
+- project files
+- Composer dependencies in the workspace
+- non-PhpThunder VS Code settings
+
+If a paid license is active, PhpThunder first tries to deactivate this device before wiping local state. If that deactivation fails and you still continue, you may need to deactivate the old device manually from the license dashboard before reactivating.
+
 ## Vendor classes or Composer symbols are missing
 
 When third-party classes show as undefined, work through this checklist:
