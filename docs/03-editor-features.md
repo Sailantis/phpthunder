@@ -4,10 +4,10 @@ PhpThunder is first and foremost an editing toolchain. This page covers the work
 
 ## At a glance
 
-| Feature                      | What it does                                                             |
-| ---------------------------- | ------------------------------------------------------------------------ |
-| Code intelligence            | Completion, hover, go-to-definition, find references, import suggestions |
-| Diagnostics                  | Parse errors, type problems, version mismatches, unused code             |
+| Feature                      | What it does                                                                     |
+| ---------------------------- | -------------------------------------------------------------------------------- |
+| Code intelligence            | Completion, hover, go-to-definition, find references, import suggestions, and PHPDoc-aware inference |
+| Diagnostics                  | Parse errors, type problems, version mismatches, array-shape key issues, unused code |
 | Quick fixes & source actions | Organize imports, generate PHPDoc, add use statements, remove dead code  |
 | Formatting                   | Configurable style for arrays, parameters, control structures, and more  |
 | TODO panel                   | Track and navigate `TODO`, `FIXME`, and similar comments project-wide    |
@@ -21,6 +21,8 @@ PhpThunder provides the core IDE behaviors expected in a well-equipped PHP works
 
 As code is entered, PhpThunder suggests global symbols (classes, functions, constants), class members, static access, and namespaced identifiers. The suggestions include method signatures, property types, and PHPDoc summaries, keeping parameter names close at hand.
 
+PhpThunder also understands PHPDoc templates, array shapes, callable signatures, dynamic return types, magic methods, fluent APIs, and local/imported type aliases. That extra context feeds higher-order inference, so member completion inside closures and arrow functions stays precise even when the variable type comes from a generic callback contract.
+
 > **Example:** Start typing `new Http` in a Laravel project and PhpThunder completes to `Illuminate\Http\Request`, adding the `use` statement at the top of the file if it's not already there.
 
 <!-- MEDIA: GIF of completion with auto-import in a controller -->
@@ -30,6 +32,8 @@ As code is entered, PhpThunder suggests global symbols (classes, functions, cons
 ### Hover
 
 Hover over any symbol to see its type signature, return type, parameters, and PHPDoc — including documentation from Composer dependencies. No need to leave the current file.
+
+Hover also reflects alias-expanded PHPDoc types and inferred callback parameter types, so higher-order code keeps the same type detail as direct member access.
 
 <!-- MEDIA: screenshot of hover showing type + PHPDoc -->
 
@@ -52,7 +56,7 @@ PhpThunder publishes diagnostics for:
 - **Parse and syntax problems** — caught during typing, no save needed
 - **Type analysis** — mismatched argument types, wrong return types, undefined properties
 - **PHP version mismatches** — using PHP 8.1 named arguments in a project targeting 8.0
-- **PHPDoc issues** — incorrect `@param` types, missing `@return` annotations
+- **PHPDoc issues** — incorrect `@param` types, missing `@return` annotations, and alias-based type problems
 - **Unused imports** — `use` statements that are never referenced in the file
 - **Unused private members** — private properties and methods that are never accessed
 

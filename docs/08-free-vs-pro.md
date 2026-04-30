@@ -10,7 +10,7 @@ This page reflects the current access boundary in the extension.
 
 The full base editing experience — everything in this list is available without a license:
 
-- **Code intelligence:** completion, hover, go-to-definition, find references, import suggestions
+- **Code intelligence:** completion, hover, go-to-definition, find references, import suggestions, and PHPDoc-backed inference for templates, array shapes, dynamic return types, magic methods, fluent APIs, aliases, and higher-order callbacks
 - **Diagnostics:** parse errors, type analysis, PHPDoc issues, unused imports, unused private members
 - **Quick fixes and source actions:** organize imports, generate PHPDoc stubs, pick import candidates
 - **Formatting:** all formatting settings for arrays, parameters, control structures, and more
