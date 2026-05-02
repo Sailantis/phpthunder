@@ -4,14 +4,14 @@ PhpThunder is first and foremost an editing toolchain. This page covers the work
 
 ## At a glance
 
-| Feature                      | What it does                                                                     |
-| ---------------------------- | -------------------------------------------------------------------------------- |
+| Feature                      | What it does                                                                                         |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------- |
 | Code intelligence            | Completion, hover, go-to-definition, find references, import suggestions, and PHPDoc-aware inference |
-| Diagnostics                  | Parse errors, type problems, version mismatches, array-shape key issues, unused code |
-| Quick fixes & source actions | Organize imports, generate PHPDoc, add use statements, remove dead code  |
-| Formatting                   | Configurable style for arrays, parameters, control structures, and more  |
-| TODO panel                   | Track and navigate `TODO`, `FIXME`, and similar comments project-wide    |
-| Composer helpers             | Run install, update, require, and dump-autoload from the command palette |
+| Diagnostics                  | Parse errors, type problems, version mismatches, array-shape key issues, unused code                 |
+| Quick fixes & source actions | Organize imports, generate PHPDoc, add use statements, remove dead code                              |
+| Formatting                   | Configurable style for arrays, parameters, control structures, and more                              |
+| TODO panel                   | Track and navigate `TODO`, `FIXME`, and similar comments project-wide                                |
+| Composer helpers             | Run install, update, require, and dump-autoload from the command palette                             |
 
 ## Code intelligence
 
@@ -116,12 +116,6 @@ Supported EditorConfig properties (recognized and applied):
 - `trim_trailing_whitespace` — `true`/`false`, whether trailing whitespace is removed on formatted lines.
 
 The server supports the usual EditorConfig glob patterns (wildcards `*` and `**`, `?`, character classes `[...]`, and alternation `{a,b}`), and anchored patterns starting with `/` are honored. Parsed .editorconfig files are cached by the server and invalidated when the file size or modification time changes.
-
-Where this is implemented:
-
-- Server-side parsing and merge: [pkg/formatter/editorconfig.go](pkg/formatter/editorconfig.go)
-- Formatting invocation and options merge: [pkg/lsp/handlers_formatting.go](pkg/lsp/handlers_formatting.go#L20-L40)
-- VS Code provider that delegates formatting to the server: [extension/src/formattingProviders.ts](extension/src/formattingProviders.ts)
 
 When both VS Code/editor settings and `.editorconfig` provide values, the server starts from VS Code's `editor` formatting options and overrides only the fields explicitly set by `.editorconfig`.
 

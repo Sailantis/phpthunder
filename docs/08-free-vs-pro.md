@@ -55,7 +55,7 @@ Pro also adds **starred completion suggestions** — the strongest match is pre-
 
 ## Trial and activation
 
-PhpThunder offers a **30-day Pro trial** — full access to every Pro feature, no credit card required. Start a trial or activate a license with `PhpThunder: Activate License`.
+PhpThunder offers a **30-day Pro trial** — full access to every Pro feature. The trial is started automatically when you first install the extension.
 
 The status bar shows your current state:
 

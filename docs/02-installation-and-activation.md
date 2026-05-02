@@ -63,23 +63,7 @@ If a Pro license lapses, PhpThunder enters Grace Period instead of blocking Pro 
 
 For the support view of activation edge cases, trial behavior, grace period details, and compatibility notes, see [Troubleshooting](09-troubleshooting.md#activation-trial-and-license-state).
 
-For pricing and plan details, see the [Sailantis website](https://sailantis.com).
-
-## Suggested workspace settings
-
-A good starting point for `.vscode/settings.json`:
-
-```json
-{
-  "phpThunder.phpVersion": "8.3",
-  "phpThunder.activeInterpreter": "PHP 8.3",
-  "phpThunder.testRunner": "auto",
-  "phpThunder.composer.mode": "auto",
-  "phpThunder.includePaths": ["stubs", "packages/shared/src"]
-}
-```
-
-Adjust the PHP version, interpreter name, and paths to match the project.
+For pricing and plan details, see the [PhpThunder website](https://sailantis.com/phpthunder).
 
 ## Useful configuration commands
 
